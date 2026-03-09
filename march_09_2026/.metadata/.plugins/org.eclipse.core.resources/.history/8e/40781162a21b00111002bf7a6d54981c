@@ -1,0 +1,171 @@
+package com.capgemini.java_dev.framework.hibernate_employee.entity;
+
+import java.util.Scanner;
+
+import com.capgemini.java_dev.framework.hibernate_jpa.entity.Employee;
+
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
+
+public class EmployeeApp {
+
+	public static void execution() {
+
+		EntityManagerFactory emf = Persistence.createEntityManagerFactory("Employee");
+		EntityManager em = emf.createEntityManager();
+
+		Scanner sc = new Scanner(System.in);
+
+		boolean running = true;
+
+		while (running) {
+
+			System.out.println("\n===== EMPLOYEE MANAGEMENT =====");
+			System.out.println("1. Create Employee");
+			System.out.println("2. Read Employee");
+			System.out.println("3. Update Employee");
+			System.out.println("4. Delete Employee");
+			System.out.println("5. Exit");
+			System.out.print("Enter choice: ");
+
+			int choice = sc.nextInt();
+
+			switch (choice) {
+
+			case 1:
+
+				System.out.print("How many employees do you want to add: ");
+				int count = sc.nextInt();
+
+				em.getTransaction().begin();
+
+				for (int i = 0; i < count; i++) {
+
+					Employee emp = new Employee();
+
+					System.out.print("Enter Employee ID: ");
+					emp.setId(sc.nextInt());
+
+					System.out.print("Enter Employee Name: ");
+					emp.setName(sc.next());
+
+					System.out.print("Enter Contact Number: ");
+					emp.setContactNumber(sc.nextLong());
+
+					em.persist(emp);
+
+				}
+
+				em.getTransaction().commit();
+
+				System.out.println("Employees Added Successfully");
+
+				break;
+
+			case 2:
+
+				System.out.print("Enter Employee ID to display: ");
+				int readId = sc.nextInt();
+
+				Employee empRead = em.find(Employee.class, readId);
+
+				if (empRead != null) {
+					System.out.println(empRead);
+				} else {
+					System.out.println("Employee not found!");
+				}
+
+				break;
+
+			case 3:
+
+				System.out.print("Enter Employee ID to update: ");
+				int updateId = sc.nextInt();
+
+				Employee empUpdate = em.find(Employee.class, updateId);
+
+				if (empUpdate != null) {
+
+					System.out.println("What do you want to update?");
+					System.out.println("1. ID");
+					System.out.println("2. Name");
+					System.out.println("3. Contact Number");
+
+					int updateChoice = sc.nextInt();
+
+					em.getTransaction().begin();
+
+					switch (updateChoice) {
+
+					case 1:
+						System.out.print("Enter new ID: ");
+						empUpdate.setId(sc.nextInt());
+						break;
+
+					case 2:
+						System.out.print("Enter new Name: ");
+						empUpdate.setName(sc.next());
+						break;
+
+					case 3:
+						System.out.print("Enter new Contact Number: ");
+						empUpdate.setContactNumber(sc.nextLong());
+						break;
+
+					default:
+						System.out.println("Invalid option");
+
+					}
+
+					em.getTransaction().commit();
+
+					System.out.println("Employee Updated Successfully");
+
+				} else {
+					System.out.println("Employee not found!");
+				}
+
+				break;
+
+			case 4:
+
+				System.out.print("Enter Employee ID to delete: ");
+				int deleteId = sc.nextInt();
+
+				Employee empDelete = em.find(Employee.class, deleteId);
+
+				if (empDelete != null) {
+
+					em.getTransaction().begin();
+					em.remove(empDelete);
+					em.getTransaction().commit();
+
+					System.out.println("Employee Deleted Successfully");
+
+				} else {
+					System.out.println("Employee not found!");
+				}
+
+				break;
+
+			case 5:
+
+				running = false;
+				System.out.println("Exiting program...");
+				break;
+
+			default:
+				System.out.println("Invalid choice");
+
+			}
+
+		}
+
+		sc.close();
+		em.close();
+		emf.close();
+
+	}
+
+}

@@ -1,0 +1,88 @@
+package com.capgemini.java_dev.framework.hibernate_jpa.entity;
+
+import java.io.Serializable;
+import java.util.Objects;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+
+@Entity
+public class Product implements Serializable {
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private int id;
+
+	private String name;
+	private String category;
+	private double price;
+	private int quantity;
+
+	public Product() {
+	}
+
+	public Product(String name, String category, double price, int quantity) {
+		this.name = name;
+		this.category = category;
+		this.price = price;
+		this.quantity = quantity;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public String getCategory() {
+		return category;
+	}
+
+	public double getPrice() {
+		return price;
+	}
+
+	public int getQuantity() {
+		return quantity;
+	}
+
+	public void setPrice(double price) {
+		this.price = price;
+	}
+
+	// toString()
+
+	@Override
+	public String toString() {
+		return "\nID: " + id + "\nName: " + name + "\nCategory: " + category + "\nPrice: " + price + "\nQuantity: "
+				+ quantity;
+	}
+
+	// hashCode()
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id, name, category, price, quantity);
+	}
+
+	// equals()
+
+	@Override
+	public boolean equals(Object obj) {
+
+		if (this == obj)
+			return true;
+
+		if (obj == null || getClass() != obj.getClass())
+			return false;
+
+		Product other = (Product) obj;
+
+		return id == other.id && Double.compare(other.price, price) == 0 && quantity == other.quantity
+				&& Objects.equals(name, other.name) && Objects.equals(category, other.category);
+	}
+}

@@ -1,0 +1,90 @@
+package com.capgemini.java_dev.framework.hibernate_jpa.dao;
+
+import java.util.List;
+
+import com.capgemini.java_dev.framework.hibernate_jpa.entity.Product;
+
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
+
+public class ProductDAO {
+
+    private EntityManager em;
+
+    public ProductDAO(EntityManager em) {
+        this.em = em;
+    }
+
+    // ADD PRODUCT
+    public void addProduct(Product p) {
+
+        em.getTransaction().begin();
+        em.persist(p);
+        em.getTransaction().commit();
+
+        System.out.println("Product added successfully.");
+    }
+
+    // VIEW ALL PRODUCTS
+    public List<Product> getAllProducts() {
+
+        TypedQuery<Product> query =
+                em.createQuery("SELECT p FROM Product p", Product.class);
+
+        return query.getResultList();
+    }
+
+    // SEARCH BY ID
+    public Product getProductById(int id) {
+
+        return em.find(Product.class, id);
+    }
+
+    // SEARCH BY CATEGORY
+    public List<Product> getProductsByCategory(String category) {
+
+        TypedQuery<Product> query =
+                em.createQuery(
+                        "SELECT p FROM Product p WHERE p.category = :category",
+                        Product.class);
+
+        query.setParameter("category", category);
+
+        return query.getResultList();
+    }
+
+    // UPDATE PRICE
+    public void updateProductPrice(int id, double newPrice) {
+
+        Product p = em.find(Product.class, id);
+
+        if (p != null) {
+
+            em.getTransaction().begin();
+            p.setPrice(newPrice);
+            em.getTransaction().commit();
+
+            System.out.println("Product price updated successfully.");
+        } else {
+            System.out.println("No product found.");
+        }
+    }
+
+    // DELETE PRODUCT
+    public void deleteProduct(int id) {
+
+        Product p = em.find(Product.class, id);
+
+        if (p != null) {
+
+            em.getTransaction().begin();
+            em.remove(p);
+            em.getTransaction().commit();
+
+            System.out.println("Product deleted successfully.");
+
+        } else {
+            System.out.println("No product found.");
+        }
+    }
+}

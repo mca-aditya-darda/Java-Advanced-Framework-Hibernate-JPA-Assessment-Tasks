@@ -1,0 +1,21 @@
+INDEX VERSION 1.134+C:\Users\adity\OneDrive\Desktop\Hibernate-JPA-Assessment\march_09_2026\.metadata\.plugins\org.eclipse.jdt.core
+2676835376.index
+282718174.index
+2421890898.index
+2812879629.index
+1035090484.index
+1357142045.index
+2666791742.index
+926051776.index
+290392946.index
+1865797976.index
+3186968092.index
+1461904419.index
+3411296377.index
+2528732149.index
+2756135809.index
+2610863765.index
+1006900260.index
+1512623365.index
+1502640012.index
+2150529200.index

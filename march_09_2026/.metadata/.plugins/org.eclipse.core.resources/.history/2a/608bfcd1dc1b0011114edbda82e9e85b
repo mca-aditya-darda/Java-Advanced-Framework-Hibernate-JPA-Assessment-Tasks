@@ -1,0 +1,194 @@
+package com.capgemini.java_dev.framework.hibernate_jpa.main;
+
+import java.util.List;
+import java.util.Scanner;
+
+import com.capgemini.java_dev.framework.hibernate_jpa.entity.Product;
+
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
+import jakarta.persistence.TypedQuery;
+
+public class JavaApp {
+
+    public static void execution() {
+
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("Product");
+        EntityManager em = emf.createEntityManager();
+
+        Scanner sc = new Scanner(System.in);
+
+        while (true) {
+
+            System.out.println("\n1. Add Product");
+            System.out.println("2. View All Products");
+            System.out.println("3. Search Product by ID");
+            System.out.println("4. Search Product by Category");
+            System.out.println("5. Update Product Price");
+            System.out.println("6. Delete Product");
+            System.out.println("7. Exit");
+
+            System.out.print("Enter Choice: ");
+            int choice = sc.nextInt();
+
+            switch (choice) {
+
+            // ADD PRODUCT
+            case 1:
+
+                sc.nextLine();
+
+                System.out.print("Add Product Name: ");
+                String name = sc.nextLine();
+
+                System.out.print("Category: ");
+                String category = sc.nextLine();
+
+                System.out.print("Price: ");
+                double price = sc.nextDouble();
+
+                System.out.print("Quantity: ");
+                int quantity = sc.nextInt();
+
+                Product p = new Product(name, category, price, quantity);
+
+                em.getTransaction().begin();
+                em.persist(p);
+                em.getTransaction().commit();
+
+                System.out.println("\nProduct added successfully.");
+                printProduct(p);
+
+                break;
+
+            // VIEW ALL PRODUCTS
+            case 2:
+
+                TypedQuery<Product> query = em.createQuery("SELECT p FROM Product p", Product.class);
+                List<Product> list = query.getResultList();
+
+                if (list.isEmpty()) {
+                    System.out.println("No product found.");
+                } else {
+                    for (Product product : list) {
+                        System.out.println();
+                        printProduct(product);
+                    }
+                }
+
+                break;
+
+            // SEARCH BY ID
+            case 3:
+
+                System.out.print("Enter Product ID: ");
+                int id = sc.nextInt();
+
+                Product product = em.find(Product.class, id);
+
+                if (product != null) {
+                    printProduct(product);
+                } else {
+                    System.out.println("No product found.");
+                }
+
+                break;
+
+            // SEARCH BY CATEGORY
+            case 4:
+
+                sc.nextLine();
+
+                System.out.print("Category: ");
+                String cat = sc.nextLine();
+
+                TypedQuery<Product> q = em.createQuery(
+                        "SELECT p FROM Product p WHERE p.category = :category", Product.class);
+
+                q.setParameter("category", cat);
+
+                List<Product> products = q.getResultList();
+
+                if (products.isEmpty()) {
+                    System.out.println("No product found.");
+                } else {
+
+                    for (Product pr : products) {
+                        System.out.println();
+                        printProduct(pr);
+                    }
+                }
+
+                break;
+
+            // UPDATE PRICE
+            case 5:
+
+                System.out.print("ID: ");
+                int pid = sc.nextInt();
+
+                System.out.print("New Price: ");
+                double newPrice = sc.nextDouble();
+
+                Product prod = em.find(Product.class, pid);
+
+                if (prod != null) {
+
+                    em.getTransaction().begin();
+                    prod.setPrice(newPrice);
+                    em.getTransaction().commit();
+
+                    System.out.println("\nProduct price updated successfully.");
+                    printProduct(prod);
+
+                } else {
+                    System.out.println("No product found.");
+                }
+
+                break;
+
+            // DELETE PRODUCT
+            case 6:
+
+                System.out.print("ID: ");
+                int deleteId = sc.nextInt();
+
+                Product dp = em.find(Product.class, deleteId);
+
+                if (dp != null) {
+
+                    em.getTransaction().begin();
+                    em.remove(dp);
+                    em.getTransaction().commit();
+
+                    System.out.println("Product deleted successfully.");
+
+                } else {
+                    System.out.println("No product found.");
+                }
+
+                break;
+
+            // EXIT
+            case 7:
+
+                em.close();
+                emf.close();
+                sc.close();
+                System.out.println("Application Closed.");
+                System.exit(0);
+            }
+        }
+    }
+
+    // PRINT METHOD
+    private static void printProduct(Product p) {
+
+        System.out.println("ID: " + p.getId());
+        System.out.println("Name: " + p.getName());
+        System.out.println("Category: " + p.getCategory());
+        System.out.println("Price: " + p.getPrice());
+        System.out.println("Quantity: " + p.getQuantity());
+    }
+}
